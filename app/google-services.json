@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "273118788353",
+    "project_id": "findy-7b165",
+    "storage_bucket": "findy-7b165.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:273118788353:android:0b04fbe8ec5a0b0ebe7900",
+        "android_client_info": {
+          "package_name": "com.example.findy"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "273118788353-j09d8jhifh6bt4hed2vuvtbi54cabgpc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCp963RsO9_KgGAHQBRYznRxS1VGZ3MEdg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "273118788353-j09d8jhifh6bt4hed2vuvtbi54cabgpc.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
