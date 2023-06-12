@@ -56,23 +56,6 @@ fun SignInScreen(
     navController: NavController,
     viewModel: SignInViewModel = hiltViewModel()
 ) {
-
-    val googleSignInState = viewModel.googleState.value
-
-
-    val launcher =
-        rememberLauncherForActivityResult(contract = ActivityResultContracts.StartActivityForResult()) {
-            val account = GoogleSignIn.getSignedInAccountFromIntent(it.data)
-            try {
-                val result = account.getResult(ApiException::class.java)
-                val credentials = GoogleAuthProvider.getCredential(result.idToken, null)
-                viewModel.googleSignIn(credentials)
-            } catch (it: ApiException) {
-                print(it)
-            }
-        }
-
-
     var email by rememberSaveable {
         mutableStateOf("")
     }
@@ -201,14 +184,6 @@ fun SignInScreen(
                     Toast.makeText(context, "${success}", Toast.LENGTH_LONG).show()
 
                     navController.navigate(Screens.FriendsScreen.route)
-                }
-            }
-        }
-
-        LaunchedEffect(key1 = googleSignInState.success) {
-            scope.launch {
-                if (googleSignInState.success != null) {
-                    Toast.makeText(context, "Anmeldung erfolgreich!", Toast.LENGTH_LONG).show()
                 }
             }
         }

@@ -22,18 +22,23 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.findy.R
 import com.example.findy.navigation.Screens
 import com.example.findy.ui.theme.LocationUtils
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.maps.model.CameraPosition
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import com.google.maps.android.compose.CameraPositionState
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.MapUiSettings
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
+import androidx.lifecycle.viewmodel.compose.viewModel
 
 
 
@@ -42,6 +47,7 @@ import com.google.maps.android.compose.rememberCameraPositionState
 fun MapScreen(fusedLocationProviderClient: FusedLocationProviderClient,
               navController: NavController) {
 
+    val locationViewModel: LocationViewModel = viewModel()
     var currentLocation by remember { mutableStateOf(LocationUtils.getDefaultLocation()) }
 
     val cameraPositionState = rememberCameraPositionState()
@@ -59,7 +65,8 @@ fun MapScreen(fusedLocationProviderClient: FusedLocationProviderClient,
         },
         onFriendsButtonClick = {
             navController.navigate(Screens.FriendsScreen.route)
-        }
+        },
+        locationViewModel = locationViewModel
     )
 
     if (requestLocationUpdate) {
@@ -81,7 +88,8 @@ private fun MyGoogleMap(
     currentLocation: Location?,
     cameraPositionState: CameraPositionState,
     onGpsIconClick: () -> Unit,
-    onFriendsButtonClick: () -> Unit
+    onFriendsButtonClick: () -> Unit,
+    locationViewModel: LocationViewModel = viewModel()
 ) {
     val mapUiSettings by remember {
         mutableStateOf(
@@ -103,7 +111,16 @@ private fun MyGoogleMap(
     }
 
     GpsIconButton(
-        onIconClick = onGpsIconClick,
+        onIconClick = {
+            onGpsIconClick()
+            currentLocation?.let { location ->
+                val userLocation = UserLocation(
+                    latitude = location.latitude,
+                    longitude = location.longitude
+                )
+                locationViewModel.saveUserLocation(userLocation) // Übergeben Sie die Location-Daten an das LocationViewModel
+            }
+        },
         onFriendsButtonClick = onFriendsButtonClick
     )
 }
