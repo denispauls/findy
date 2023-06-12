@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.CircularProgressIndicator
@@ -30,11 +31,14 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role.Companion.Button
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -50,6 +54,7 @@ fun SignUpScreen(
     navController: NavController,
     viewModel: SignUpViewModel = hiltViewModel()
 ){
+    val focusManager = LocalFocusManager.current
     var email by rememberSaveable{
         mutableStateOf("")
     }
@@ -73,15 +78,25 @@ fun SignUpScreen(
             shape = RoundedCornerShape(8.dp), singleLine = true, placeholder = {
                 Text(text = "Email")
             }
+            ,keyboardActions = KeyboardActions(
+                onNext = {
+                    focusManager.moveFocus(FocusDirection.Down)
+                }
+            )
         )
         Spacer(modifier = Modifier.height(16.dp))
 
         TextField(value = password, onValueChange = {
             password = it
-        }, modifier = Modifier.fillMaxWidth(), colors = TextFieldDefaults.textFieldColors(backgroundColor = lightBlue, cursorColor = Color.Black, disabledLabelColor = lightBlue, unfocusedIndicatorColor = Color.Transparent, focusedIndicatorColor = Color.Transparent ),
+        }, visualTransformation = PasswordVisualTransformation(mask = 0x2022.toChar()),modifier = Modifier.fillMaxWidth(), colors = TextFieldDefaults.textFieldColors(backgroundColor = lightBlue, cursorColor = Color.Black, disabledLabelColor = lightBlue, unfocusedIndicatorColor = Color.Transparent, focusedIndicatorColor = Color.Transparent ),
             shape = RoundedCornerShape(8.dp), singleLine = true, placeholder = {
                 Text(text = "Passwort")
             }
+                    ,keyboardActions = KeyboardActions(
+                    onNext = {
+                        focusManager.clearFocus()
+                    }
+                    )
         )
 
        Button(onClick = {
