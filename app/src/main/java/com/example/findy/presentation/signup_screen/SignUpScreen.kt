@@ -1,6 +1,7 @@
 package com.example.findy.presentation.signup_screen
 
 import android.widget.Toast
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -37,6 +38,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import com.example.findy.R
 import com.example.findy.navigation.Screens
 import com.example.findy.ui.theme.RegularFont
@@ -45,6 +47,7 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun SignUpScreen(
+    navController: NavController,
     viewModel: SignUpViewModel = hiltViewModel()
 ){
     var email by rememberSaveable{
@@ -99,13 +102,25 @@ fun SignUpScreen(
                 CircularProgressIndicator()
             }
         }
-        Text(text = "Schon einen Account? Dann melde dich an", fontWeight = FontWeight.Bold, color = Color.Black, fontFamily = RegularFont)
-        Text(text = "oder verbinde dich mit", fontWeight = FontWeight.Medium, color = Color.Gray)
-        Row(modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 10.dp), horizontalArrangement = Arrangement.Center) {
-            IconButton(onClick = { /*TODO*/ }) {
-                Icon(painter = painterResource(id = R.drawable.ic_google), contentDescription = "Google Icon", modifier = Modifier.size(50.dp), tint = Color.Unspecified)
+        Text(
+            modifier = Modifier
+                .padding(15.dp)
+                .clickable {
+                    navController.navigate(Screens.SignInScreen.route)
+                },
+            text = "Schon einen Account? Dann melde dich an!",
+            fontWeight = FontWeight.Bold, color = Color.Black, fontFamily = RegularFont
+        )
+
+            LaunchedEffect(key1 = state.value?.isSuccess) {
+                scope.launch {
+                    if (state.value?.isSuccess?.isNotEmpty() == true) {
+                        val success = state.value?.isSuccess
+                        Toast.makeText(context, "${success}", Toast.LENGTH_LONG).show()
+
+                        navController.navigate(Screens.FriendsScreen.route)
+                    }
+                }
             }
 
             LaunchedEffect(key1 = state.value?.isSuccess){
@@ -126,4 +141,3 @@ fun SignUpScreen(
             }
         }
     }
-}
