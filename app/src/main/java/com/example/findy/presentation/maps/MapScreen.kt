@@ -4,11 +4,14 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.location.Location
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
@@ -110,7 +113,8 @@ private fun MyGoogleMap(
         }
     }
 
-    GpsIconButton(
+    Box(Modifier.absoluteOffset(334.dp,764.dp) ){
+        GpsIconButton(
         onIconClick = {
             onGpsIconClick()
             currentLocation?.let { location ->
@@ -120,38 +124,23 @@ private fun MyGoogleMap(
                 )
                 locationViewModel.saveUserLocation(userLocation) // Übergeben Sie die Location-Daten an das LocationViewModel
             }
-        },
-        onFriendsButtonClick = onFriendsButtonClick
-    )
+        }
+    )}
+
 }
 
 @Composable
 private fun GpsIconButton(
-    onIconClick: () -> Unit,
-    onFriendsButtonClick: () -> Unit
+    onIconClick: () -> Unit
 ) {
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Bottom,
-    ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.End
-        ) {
+
             IconButton(onClick = onIconClick) {
                 Icon(
-                    modifier = Modifier.padding(bottom = 100.dp, end = 20.dp),
                     painter = painterResource(id = R.drawable.ic_gps_fixed),
-                    contentDescription = null
-                )
-            }
-            IconButton(onClick = onFriendsButtonClick) {
-                Icon(
-                    modifier = Modifier.padding(bottom = 0.dp, end = 20.dp),
-                    painter = painterResource(id = R.drawable.ic_back_arrow),
-                    contentDescription = null
-                )
+                    contentDescription = null,
+                    Modifier.size(70.dp)
+
+                    )
             }
         }
-    }
-}
+
