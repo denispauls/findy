@@ -17,7 +17,6 @@ import com.google.android.gms.maps.model.LatLng
 object LocationUtils {
     fun getDefaultLocation(): Location {
         val location = Location(LocationManager.GPS_PROVIDER)
-
         return location
     }
 
