@@ -123,6 +123,7 @@ fun SignInScreen(
                 unfocusedIndicatorColor = Color.Transparent,
                 focusedIndicatorColor = Color.Transparent
             ),
+
             shape = RoundedCornerShape(8.dp),
             singleLine = true,
             placeholder = {

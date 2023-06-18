@@ -9,6 +9,7 @@
 
 
     <application
+        android:windowSoftInputMode="stateVisible"
         android:allowBackup="true"
         android:name=".ApplicationFirebaseAuth"
         android:dataExtractionRules="@xml/data_extraction_rules"

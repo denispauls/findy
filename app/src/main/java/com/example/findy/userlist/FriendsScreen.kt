@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -31,7 +32,36 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.findy.navigation.Screens
-
+@Composable
+fun MyProfileCard(navController: NavController) {
+    Card(
+        shape = RoundedCornerShape(4.dp),
+        colors = CardDefaults.cardColors(Color.Gray),
+        border = BorderStroke(1.dp, color = Color.Black),
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(120.dp)
+            .clickable { navController.navigate(route = Screens.MapScreen.route) }
+    ) {
+        Row {
+            Icon(
+                Icons.Rounded.AccountCircle,
+                contentDescription = null,
+                modifier = Modifier.size(120.dp)
+            )
+            Column(Modifier.padding(6.dp)) {
+                Text(
+                    text = "Name Surname",
+                    fontSize = 18.sp
+                )
+                Text(
+                    text = "Bio/Last online",
+                    fontSize = 14.sp
+                )
+            }
+        }
+    }
+}
 @Composable
 fun ProfileCard(navController: NavController) {
     Card(
@@ -69,8 +99,10 @@ fun FriendsScreen(navController: NavController){
     }
 
     Box(Modifier.padding(top = 6.dp, start = 6.dp, end = 6.dp)){
+        MyProfileCard(navController)
         LazyColumn(
             Modifier
+                .offset(0.dp,126.dp)
                 .fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(6.dp))
         {
