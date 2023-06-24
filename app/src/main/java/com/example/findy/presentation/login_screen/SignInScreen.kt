@@ -128,7 +128,7 @@ fun SignInScreen(
             singleLine = true,
             placeholder = {
                 Text(text = "Passwort")
-            }
+            },visualTransformation = PasswordVisualTransformation(mask = 0x2022.toChar())
         )
 
         Button(
