@@ -1,5 +1,6 @@
 package com.example.findy
 
+import MapScreen
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -10,7 +11,6 @@ import androidx.navigation.compose.rememberNavController
 //import com.example.findy.navigation.NavigationGraph
 import com.example.findy.navigation.Screens
 import com.example.findy.presentation.login_screen.SignInScreen
-import com.example.findy.presentation.maps.MapScreen
 import com.example.findy.presentation.signup_screen.SignUpScreen
 import com.example.findy.ui.theme.FindyTheme
 import com.example.findy.userlist.FriendsScreen

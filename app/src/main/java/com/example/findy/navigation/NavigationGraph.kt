@@ -11,7 +11,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.findy.MainActivity
 //import com.example.findy.MapActivity
 import com.example.findy.presentation.login_screen.SignInScreen
-import com.example.findy.presentation.maps.MapScreen
+//import com.example.findy.presentation.maps.MapScreen
 import com.example.findy.presentation.signup_screen.SignUpScreen
 import com.example.findy.ui.theme.FindyTheme
 import com.google.android.gms.location.FusedLocationProviderClient

@@ -1,7 +1,4 @@
-package com.example.findy.presentation.maps
-
 import android.annotation.SuppressLint
-import android.content.Context
 import android.location.Location
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -11,16 +8,15 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
@@ -29,18 +25,19 @@ import com.example.findy.navigation.Screens
 import com.example.findy.ui.theme.LocationUtils
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.maps.model.CameraPosition
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
 import com.google.maps.android.compose.CameraPositionState
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.MapUiSettings
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
-import androidx.lifecycle.viewmodel.compose.viewModel
-
-
+import com.example.findy.presentation.maps.LocationPermissionsAndSettingDialogs
+import com.example.findy.presentation.maps.LocationViewModel
+import com.example.findy.presentation.maps.UserLocation
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationRequest
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 
 @SuppressLint("MissingPermission")
 @Composable
@@ -50,6 +47,8 @@ fun MapScreen(fusedLocationProviderClient: FusedLocationProviderClient,
     val locationViewModel: LocationViewModel = viewModel()
     var currentLocation by remember { mutableStateOf(LocationUtils.getDefaultLocation()) }
 
+    val currentLocationState = remember { mutableStateOf<Location?>(null) }
+
     val cameraPositionState = rememberCameraPositionState()
     cameraPositionState.position = CameraPosition.fromLatLngZoom(
         LocationUtils.getPosition(currentLocation), 12f
@@ -57,12 +56,28 @@ fun MapScreen(fusedLocationProviderClient: FusedLocationProviderClient,
 
     var requestLocationUpdate by remember { mutableStateOf(true) }
 
+
+
+    LaunchedEffect(Unit) {
+        while (isActive) {
+            LocationUtils.requestLocationResultCallback(fusedLocationProviderClient) { locationResult ->
+                locationResult.lastLocation?.let { location ->
+                    locationViewModel.updateCurrentLocation(location)
+                    currentLocationState.value = location
+                    val userLocation = UserLocation(
+                        latitude = location.latitude,
+                        longitude = location.longitude
+                    )
+                    locationViewModel.saveUserLocation(userLocation)
+                }
+            }
+            delay(2000) // Warten für zwei Sekunden
+        }
+    }
+
     MyGoogleMap(
-        currentLocation = currentLocation,
+        currentLocationState = currentLocationState,
         cameraPositionState = cameraPositionState,
-        onGpsIconClick = {
-            requestLocationUpdate = true
-        },
         onFriendsButtonClick = {
             navController.navigate(Screens.FriendsScreen.route)
         },
@@ -85,9 +100,8 @@ fun MapScreen(fusedLocationProviderClient: FusedLocationProviderClient,
 
 @Composable
 private fun MyGoogleMap(
-    currentLocation: Location?,
+    currentLocationState: MutableState<Location?>,
     cameraPositionState: CameraPositionState,
-    onGpsIconClick: () -> Unit,
     onFriendsButtonClick: () -> Unit,
     locationViewModel: LocationViewModel = viewModel()
 ) {
@@ -102,7 +116,7 @@ private fun MyGoogleMap(
         cameraPositionState = cameraPositionState,
         uiSettings = mapUiSettings,
     ) {
-        currentLocation?.let { location ->
+        currentLocationState.value?.let { location ->
             Marker(
                 state = MarkerState(position = LocationUtils.getPosition(location)),
                 title = "Aktuelle Position"
@@ -112,18 +126,18 @@ private fun MyGoogleMap(
 
     GpsIconButton(
         onIconClick = {
-            onGpsIconClick()
-            currentLocation?.let { location ->
+            currentLocationState.value?.let { location ->
                 val userLocation = UserLocation(
                     latitude = location.latitude,
                     longitude = location.longitude
                 )
-                locationViewModel.saveUserLocation(userLocation) // Übergeben Sie die Location-Daten an das LocationViewModel
+                locationViewModel.saveUserLocation(userLocation)
             }
         },
         onFriendsButtonClick = onFriendsButtonClick
     )
 }
+
 
 @Composable
 private fun GpsIconButton(
@@ -145,13 +159,7 @@ private fun GpsIconButton(
                     contentDescription = null
                 )
             }
-            IconButton(onClick = onFriendsButtonClick) {
-                Icon(
-                    modifier = Modifier.padding(bottom = 0.dp, end = 20.dp),
-                    painter = painterResource(id = R.drawable.ic_back_arrow),
-                    contentDescription = null
-                )
-            }
         }
     }
 }
+
