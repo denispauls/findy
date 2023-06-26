@@ -26,7 +26,7 @@ fun NavigationGraph(
 
     NavHost(
         navController = navController,
-        startDestination = Screens.MapScreen.route
+        startDestination = Screens.SignInScreen.route
     ) {
         composable(route = Screens.SignInScreen.route) {
             SignInScreen(navController = navController)
